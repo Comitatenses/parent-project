@@ -3,6 +3,10 @@
 ## ignore all target directories, recursively.
 target/
 !.mvn/wrapper/maven-wrapper.jar
+*.jar
+*.war
+*.ear
+*.logs
 ## do not ignore .gitignore file (or folder) in the current directory!
 !/.gitignore
 
