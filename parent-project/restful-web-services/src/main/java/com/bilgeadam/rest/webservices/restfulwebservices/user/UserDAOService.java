@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -46,6 +47,18 @@ public class UserDAOService {
         */
     }
 
-
+    public User deleteById(Integer id) {
+        //memory de arraylist kullandığımız için iterator kullanarak liste elemanı sildik.
+        //DB kullanılsaydı delete metodu ile sileceğimiz tablo ve id alanını map ederek bunu silebilirdik.
+        Iterator<User> iterator = users.iterator();
+        while(iterator.hasNext()) {
+            User user = iterator.next();
+            if (user.getId().equals(id)) {
+                iterator.remove();
+                return user;
+            }
+        }
+        return null;
+    }
 
 }

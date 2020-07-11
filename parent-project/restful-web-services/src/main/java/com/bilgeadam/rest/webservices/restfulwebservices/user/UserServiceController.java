@@ -13,6 +13,9 @@ import java.util.List;
 //Bu sınıf http tarafından gelen requestlerin karşılandığı alan. User servisine yapılan çağrılar buradan karşılanmakta.
 //Sınıf adlandırmada Controller türündeki sınıflar bazı projelerde Resource olarak da adlandırılabilir.
 //Servisler arası iletişim için Controller sınıflar kullanılır.
+//Controller ifadesi aslında REST için MVC deki frontend deki controller kısmına karşılık geldiğinden bu şekilde ifade edilmekte.
+//@Component -> @Controller( == @Component, @RequestMapping ile kullanıldığını ifade eder) -> @RestController(@Controller+@ResponseBody)
+//@RestController ise @Controller'ın kullanacağı @RequestMapping ifadelerinin @ResponseBody ifadelerini de içereceğini varsayar. Özet: Tamamiyle Rest e uygun controller dır.
 @RestController
 public class UserServiceController {
 
@@ -44,7 +47,7 @@ public class UserServiceController {
     @PostMapping(path = "/createUserAndReturn")
     public User createUserAndReturn(@RequestBody User user) {
         //status 200
-        return new ResponseEntity<User> (userDAOService.save(user), HttpStatus.OK).getBody();
+        return new ResponseEntity<User>(userDAOService.save(user), HttpStatus.OK).getBody();
     }
 
     //en iyi yöntem
@@ -64,8 +67,16 @@ public class UserServiceController {
     public User findUserThrowException(@PathVariable Integer id) {
         User user = userDAOService.findById(id);
         if (user == null)
-            throw new UserNotFoundException("id" + id);
+            throw new UserNotFoundException("id:" + id);
         return user;
+    }
+
+    //Eğer silinecek kayıt bulunmadıysa UserNotFoundExp fırlatır. Eğer kayıt silindi ise DeleteMapping Status.OK (200) döner.
+    @DeleteMapping(path = "/users/{id}") // POSTMAN  DELETE + /users/{id}
+    public void deleteUser(@PathVariable Integer id) {
+        User user = userDAOService.deleteById(id);
+        if (user == null)
+            throw new UserNotFoundException("id: " + id);
     }
 
 }
