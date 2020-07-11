@@ -9,14 +9,18 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 import java.util.List;
 
+
+//Bu sınıf http tarafından gelen requestlerin karşılandığı alan. User servisine yapılan çağrılar buradan karşılanmakta.
+//Sınıf adlandırmada Controller türündeki sınıflar bazı projelerde Resource olarak da adlandırılabilir.
+//Servisler arası iletişim için Controller sınıflar kullanılır.
 @RestController
-public class UserService {
+public class UserServiceController {
 
     //@Autowired anotasyonu yerine constructor ile injection yapılması önerilmekte.
     private UserDAOService userDAOService;
 
     @Autowired
-    public UserService(UserDAOService userDAOService) {
+    public UserServiceController(UserDAOService userDAOService) {
         this.userDAOService = userDAOService;
     }
 
@@ -56,5 +60,12 @@ public class UserService {
 
     // İşler Ters Giderse Ne Yapılır
     // ÖRN: olmayan bir kaydı sorguladığınızda da successful(200) alırsınız ama body boş olur. Burada sizce bir terslik yok mu? Önce bu çözümlenmeli
+    @GetMapping(path = "/usersNotFound/{id}")
+    public User findUserThrowException(@PathVariable Integer id) {
+        User user = userDAOService.findById(id);
+        if (user == null)
+            throw new UserNotFoundException("id" + id);
+        return user;
+    }
 
 }
