@@ -1,7 +1,0 @@
-com\bilgeadam\rest\webservices\restfulwebservices\helloworld\ExampleBean.class
-com\bilgeadam\rest\webservices\restfulwebservices\RestfulWebServicesApplication.class
-com\bilgeadam\rest\webservices\restfulwebservices\user\User.class
-com\bilgeadam\rest\webservices\restfulwebservices\user\UserService.class
-com\bilgeadam\rest\webservices\restfulwebservices\helloworld\HelloWorldController.class
-com\bilgeadam\rest\webservices\restfulwebservices\helloworld\ExampleJSon.class
-com\bilgeadam\rest\webservices\restfulwebservices\user\UserDAOService.class
