@@ -63,3 +63,4 @@ Thumbs.db
 **/application.properties
 
 /generated/
+/restful-web-services/target/

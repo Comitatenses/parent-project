@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
@@ -51,10 +52,21 @@ public class UserServiceController {
     }
 
     //en iyi yöntem
+    //@Valid anotasyonu eklenerek kullanıcıdan gelen validasyon uyarılarını 400 Bad Request olarak dönülmesini sağlar.
+
+    /* Ancak bu durumda 400 mesajı sonrası kullanıcıyı bilgilendiren bir hata mesajı oluşmayacaktır. Tüketen tarafı
+    bilgilendirmek için CustomExceptionHandler a hangi alanın yanlış olduğunu ifade eden custom bir exception ekleyerek problemi çözebiliriz.
+    */
+    /*Not: Validation API den daha kapsamlı olarak Validasyon özelliklerini içeren kütüphane Hibernate-Validator API ıdır.
+     Bu ikisi spring-boot-web-starter dependency dahilinde projede mevcuttur.
+     */
     @PostMapping(path = "/createUser")
-    public void createUser(@RequestBody User user) {
+    public void createUser(@Valid @RequestBody User user) {
         User newUser = userDAOService.save(user);
-        URI resource = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand((newUser.getId())).toUri();
+        URI resource = ServletUriComponentsBuilder
+                .fromCurrentRequest().path("/{id}")
+                .buildAndExpand((newUser.getId()))
+                .toUri();
         //status 201
         ResponseEntity.created(resource);
         // Bu yazım ile response header içerisinde oluşturulan kullanıcının kaynak bilgisi de yer alacaktır.

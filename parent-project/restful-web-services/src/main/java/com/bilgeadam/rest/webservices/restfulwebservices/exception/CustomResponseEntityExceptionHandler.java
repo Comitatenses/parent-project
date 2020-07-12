@@ -1,8 +1,10 @@
 package com.bilgeadam.rest.webservices.restfulwebservices.exception;
 
 import com.bilgeadam.rest.webservices.restfulwebservices.user.UserNotFoundException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,5 +40,19 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         ExceptionResponse exceptionResponse =
                 new ExceptionResponse(new Date(), ex.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+    }
+
+
+    // 400 Bad Request te alının hatanın detaylandırılmasını sağlayan custom metodu yazıyoruz.
+    // Burada extend edilen sınıftaki metodu kendi yazılımımıza uygun olarak değiştireceğiz.
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        // Burada exception detail bilgisi olarak User nesnesinin değerleri bind edilirken hangi fieldlarında(bind edilirken),
+        // validasyonu takıldığını exception ın içerisine ekliyoruz.
+        ExceptionResponse exceptionResponse =
+                new ExceptionResponse(new Date(), "Validation Failed", ex.getBindingResult().toString());
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 }
