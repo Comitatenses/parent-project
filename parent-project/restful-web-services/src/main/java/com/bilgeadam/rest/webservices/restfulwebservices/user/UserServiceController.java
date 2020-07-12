@@ -1,6 +1,8 @@
 package com.bilgeadam.rest.webservices.restfulwebservices.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +11,9 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
 //Bu sınıf http tarafından gelen requestlerin karşılandığı alan. User servisine yapılan çağrılar buradan karşılanmakta.
@@ -33,9 +38,36 @@ public class UserServiceController {
         return userDAOService.findAll();
     }
 
+/*
+
     @GetMapping(path = "/users/{id}")
     public User findUser(@PathVariable Integer id) {
         return userDAOService.findById(id);
+    }
+*/
+
+    @GetMapping(path = "/users/{id}")
+//    public User findUser(@PathVariable Integer id) {
+    public EntityModel<User> findUser(@PathVariable Integer id) {
+        User user = userDAOService.findById(id);
+        if (user == null)
+            throw new  UserNotFoundException("id: " + id);
+
+        // Buraya HATEOAS eklenecek. Burada tekil bir sorgulama yapıldığı zaman tüm kayıtları getiren Resource linki ekleneek /users
+        //"all-users", SERVER_PATH + "/users"
+        //retrieveAllUsers
+        //
+        EntityModel<User> resource = EntityModel.of(user);
+
+        // methodOn(Class<T> controller) kısmını kullanarak controller metodlarını dummy(yalnızca linkini) alabilecek kadar mock eder.
+        // linkTo static metodu ile de link kısmını alarak WebMvcLinkBuilder sınıfına uygun olarak oluşturur.
+        WebMvcLinkBuilder linkTo = WebMvcLinkBuilder.linkTo(methodOn(this.getClass()).findAllUsers());
+
+        resource.add(linkTo.withRel("all-users"));
+
+        // EntityModel wrapper sınıfı User sınıfını kendine dahil ederek eklenecek linki de kaynak olarak body message a ekleyecektir.
+        // Eski metod User nesnesi dönüyorken artık EntityModel<User> türünde nesne dönmelidir.
+        return resource;
     }
 
     //Önerilmiyor
