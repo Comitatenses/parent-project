@@ -33,6 +33,7 @@ public class UserServiceController {
         this.userDAOService = userDAOService;
     }
 
+//    @RequestMapping(method = RequestMethod.GET, path = "/users")
     @GetMapping(path = "/users")
     public List<User> findAllUsers() {
         return userDAOService.findAll();
