@@ -11,6 +11,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -49,16 +50,16 @@ public class UserServiceController {
 
     @GetMapping(path = "/users/{id}")
 //    public User findUser(@PathVariable Integer id) {
-    public EntityModel<User> findUser(@PathVariable Integer id) {
-        User user = userDAOService.findById(id);
-        if (user == null)
+    public EntityModel<User> findUser(@PathVariable Long id) {
+        Optional<User> user = userDAOService.findById(id);
+        if (!user.isPresent())
             throw new  UserNotFoundException("id: " + id);
 
         // Buraya HATEOAS eklenecek. Burada tekil bir sorgulama yapıldığı zaman tüm kayıtları getiren Resource linki ekleneek /users
         //"all-users", SERVER_PATH + "/users"
         //retrieveAllUsers
         //
-        EntityModel<User> resource = EntityModel.of(user);
+        EntityModel<User> resource = EntityModel.of(user.get());
 
         // methodOn(Class<T> controller) kısmını kullanarak controller metodlarını dummy(yalnızca linkini) alabilecek kadar mock eder.
         // linkTo static metodu ile de link kısmını alarak WebMvcLinkBuilder sınıfına uygun olarak oluşturur.
@@ -101,7 +102,7 @@ public class UserServiceController {
                 .buildAndExpand((newUser.getId()))
                 .toUri();
         //status 201
-        ResponseEntity.created(resource);
+        ResponseEntity.created(resource).build();
         // Bu yazım ile response header içerisinde oluşturulan kullanıcının kaynak bilgisi de yer alacaktır.
     }
 
@@ -109,16 +110,16 @@ public class UserServiceController {
     // İşler Ters Giderse Ne Yapılır
     // ÖRN: olmayan bir kaydı sorguladığınızda da successful(200) alırsınız ama body boş olur. Burada sizce bir terslik yok mu? Önce bu çözümlenmeli
     @GetMapping(path = "/usersNotFound/{id}")
-    public User findUserThrowException(@PathVariable Integer id) {
-        User user = userDAOService.findById(id);
-        if (user == null)
+    public User findUserThrowException(@PathVariable Long id) {
+        Optional<User> user = userDAOService.findById(id);
+        if (!user.isPresent())
             throw new UserNotFoundException("id:" + id);
-        return user;
+        return user.get();
     }
 
     //Eğer silinecek kayıt bulunmadıysa UserNotFoundExp fırlatır. Eğer kayıt silindi ise DeleteMapping Status.OK (200) döner.
     @DeleteMapping(path = "/users/{id}") // POSTMAN  DELETE + /users/{id}
-    public void deleteUser(@PathVariable Integer id) {
+    public void deleteUser(@PathVariable Long id) {
         User user = userDAOService.deleteById(id);
         if (user == null)
             throw new UserNotFoundException("id: " + id);
