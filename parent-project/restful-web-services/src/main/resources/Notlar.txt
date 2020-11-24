@@ -1,0 +1,11 @@
+#### Çok Dillilik (internationalization)
+
+## Configuration
+- LocaleResolver kullanılacak
+    - Default Locale - Locale.US kullanılıyor.
+- ResourceBudleMessageSource sınıfı kullanılacak.
+
+## Kullanım
+- @Autowire MessageSource
+- @RequestHeader(value = "Accept-Language", required = false) Locale locale
+- messageSource.getMessage(helloWorld.message", null, locale) ile mesaj gönderilecek.

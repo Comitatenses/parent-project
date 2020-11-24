@@ -17,6 +17,11 @@ public class HelloWorldController {
         return "Hello World!";
     }
 
+    @GetMapping(path = "/hello-world-internationalized")
+    public String helloWorldInternationalized() {
+        return "Hello World!";
+    }
+
     // GET
     // URI - /hello-world
     // method - "hello world"
