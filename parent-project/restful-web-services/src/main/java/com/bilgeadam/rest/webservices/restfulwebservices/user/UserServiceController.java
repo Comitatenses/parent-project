@@ -27,7 +27,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class UserServiceController {
 
     //@Autowired anotasyonu yerine constructor ile injection yapılması önerilmekte.
-    private UserDAOService userDAOService;
+    private final UserDAOService userDAOService;
 
     @Autowired
     public UserServiceController(UserDAOService userDAOService) {
